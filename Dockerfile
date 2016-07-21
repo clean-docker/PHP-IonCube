@@ -24,6 +24,7 @@ RUN apt-get install -y apache2 \
     php5-gd \
     php5-mysql \
     php5-mcrypt \
+    git \
     unzip \
     vim \
     wget \
@@ -31,6 +32,15 @@ RUN apt-get install -y apache2 \
     mysql-client-5.5 \
     libxml2-dev \
     && rm -rf /var/lib/apt/lists/* /var/cache/apt/*
+
+RUN mkdir ~/.dev-alias \
+    && wget https://github.com/rafaelstz/dev-alias/archive/master.zip -P ~/.dev-alias \
+    && unzip -qo ~/.dev-alias/master.zip -d ~/.dev-alias \
+    && mv ~/.dev-alias/dev-alias-master/* ~/.dev-alias \
+    && rm -rf ~/.dev-alias/dev-alias-master \
+    && rm ~/.dev-alias/master.zip \
+    && echo "source ~/.dev-alias/alias.sh" >> ~/.bashrc
+    && source ~/.dev-alias/alias.sh
 
 RUN usermod -u 1000 www-data    
 
@@ -42,15 +52,6 @@ RUN tar xvjfC /tmp/ioncube_loaders_lin_x86-64.tar.bz2 /tmp/ \
     && rm -rf /tmp/ioncube
 COPY 00-ioncube.ini /etc/php5/apache2/conf.d/00-ioncube.ini
 COPY 00-ioncube.ini /etc/php5/cli/conf.d/00-ioncube.ini
-
-RUN mkdir ~/.dev-alias \
-    && wget https://github.com/rafaelstz/dev-alias/archive/master.zip -P ~/.dev-alias \
-    && unzip -qo ~/.dev-alias/master.zip -d ~/.dev-alias \
-    && mv ~/.dev-alias/dev-alias-master/* ~/.dev-alias \
-    && rm -rf ~/.dev-alias/dev-alias-master \
-    && rm ~/.dev-alias/master.zip \
-    && echo "source ~/.dev-alias/alias.sh" >> ~/.bashrc
-    && source ~/.dev-alias/alias.sh
 
 RUN /etc/init.d/apache2 restart
 

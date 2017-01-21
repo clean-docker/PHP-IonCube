@@ -5,17 +5,12 @@ MAINTAINER Rafael Corrêa Gomes <rafaelcg_stz@hotmail.com>
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     software-properties-common \
-    python-software-properties
-
-RUN DEBIAN_FRONTEND=noninteractive add-apt-repository ppa:ondrej/php5-oldstable
-
-RUN apt-get update \
-    && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
-    php5 
-
-RUN apt-get upgrade -y
-
-RUN apt-get install -y apache2 \
+    python-software-properties \
+    && DEBIAN_FRONTEND=noninteractive add-apt-repository ppa:ondrej/php5-oldstable \
+    && apt-get update \
+    && apt-get install -y \
+    php5 \
+    apache2 \
     apache2-utils \
     libapache2-mod-php5 \
     bzip2 \
@@ -42,9 +37,10 @@ RUN mkdir ~/.dev-alias \
     && echo "source ~/.dev-alias/alias.sh" >> ~/.bashrc
     && source ~/.dev-alias/alias.sh
 
-RUN usermod -u 1000 www-data    
+RUN usermod -u 1000 www-data
 
 ADD http://downloads3.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.bz2 /tmp/
+
 RUN tar xvjfC /tmp/ioncube_loaders_lin_x86-64.tar.bz2 /tmp/ \
     && rm /tmp/ioncube_loaders_lin_x86-64.tar.bz2 \
     && mkdir -p /usr/local/ioncube \
@@ -60,4 +56,5 @@ WORKDIR ["/var/www"]
 
 EXPOSE 80
 
-CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+# CMD ["/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+CMD ["apache2-foreground", "-DFOREGROUND"]
